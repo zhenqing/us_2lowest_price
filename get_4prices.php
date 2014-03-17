@@ -336,12 +336,14 @@ function getDetail2_new($xml) {
 //				continue;
 //			}
                         $a[$i]++;
-                        //echo "j=".$a[$i]."\n";
-                        if($a[$i]==2){
-			$re_arr[$i]['asin'] = $asin;
-			$landed_amount = $xml3->Price->ListingPrice->Amount;
-			$re_arr[$i]['landed_amount2'] = $landed_amount;
-                        break;
+                        if($re_arr[$i]['new_2lowest']==null){
+                                    if($xml3->Qualifiers->FulfillmentChannel == 'Amazon') {
+                                    $landed_amount = $xml3->Price->ListingPrice->Amount;
+                                    $re_arr[$i]['new_2lowest'] = $landed_amount;
+                                    }else if($a[$i]==2){
+                                      $landed_amount = $xml3->Price->ListingPrice->Amount;
+                                    $re_arr[$i]['new_2lowest'] = $landed_amount;
+                                    }
                         }
 		}
 		$i++;

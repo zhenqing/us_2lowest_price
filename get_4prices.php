@@ -100,15 +100,15 @@ function run($dir_r, $dir_w, $file, $products_temp) {
                 
 				$xml = getPriceById($searchTerm);   
 
-				var_dump($xml);            
+				//var_dump($xml);            
 				$products1 = getDetail_new($xml);
 				$products2 = getDetail2_new($xml);
 				//$products = $products1;
-				var_dump($products1);
+				//var_dump($products1);
 
 				if (!empty($products1)) {
 					for ( $i=0; $i< count($products1); $i++ ) {
-						$csv_data = array($products1[$i]['asin'], $products1[$i]['landed_amount'],$products2[$i]['landed_amount2']);
+						$csv_data = array($products1[$i]['asin'], $products1[$i]['new_lowest'],$products2[$i]['new_2lowest']);
 						fputcsv($fh_w, $csv_data);
 					}
 				}
@@ -124,10 +124,10 @@ function run($dir_r, $dir_w, $file, $products_temp) {
 		}
 
 		$xml = getPriceById($searchTerm);
-		var_dump($xml);   
+		//var_dump($xml);   
 		$products1 = getDetail_new($xml);
 		$products2 = getDetail2_new($xml);
-		var_dump($products2);
+		//var_dump($products2);
 		if (!empty($products1)) {
 					for ( $i=0; $i< count($products1); $i++ ) {
 						$csv_data = array($products1[$i]['asin'], $products1[$i]['landed_amount'],$products2[$i]['landed_amount2']);
@@ -271,14 +271,14 @@ function getDetail_new($xml) {
                         //echo "j=".$a[$i]."\n";
                         if($a[$i]==1){
 			$re_arr[$i]['asin'] = $asin;
-			$landed_amount = $xml3->Price->ListingPrice->Amount;
-			$re_arr[$i]['landed_amount'] = $landed_amount;
+			$ListingPrice = $xml3->Price->ListingPrice->Amount;
+			$re_arr[$i]['new_lowest'] = $ListingPrice;
                         break;
                         }
 		}
 		$i++;
 	}
-	var_dump($re_arr);
+	//var_dump($re_arr);
 	return $re_arr;
         
 }
@@ -335,20 +335,21 @@ function getDetail2_new($xml) {
 //			if ($xml3->Qualifiers->FulfillmentChannel != 'Amazon') {
 //				continue;
 //			}
-                        $a[$i]++;
-                        if($re_arr[$i]['new_2lowest']==null){
-                                    if($xml3->Qualifiers->FulfillmentChannel == 'Amazon') {
-                                    $landed_amount = $xml3->Price->ListingPrice->Amount;
-                                    $re_arr[$i]['new_2lowest'] = $landed_amount;
-                                    }else if($a[$i]==2){
-                                      $landed_amount = $xml3->Price->ListingPrice->Amount;
-                                    $re_arr[$i]['new_2lowest'] = $landed_amount;
-                                    }
-                        }
+			var_dump($xml3);
+            $a[$i]++;
+            if($re_arr[$i]['new_2lowest']==null){
+                if(($a[$i]>1)&&($xml3->Qualifiers->FulfillmentChannel == 'Amazon')) {
+                    $ListingPrice = $xml3->Price->ListingPrice->Amount;
+                    $re_arr[$i]['new_2lowest'] = $ListingPrice;
+                }else if($a[$i]==2){
+                    $ListingPrice = $xml3->Price->ListingPrice->Amount;
+                    $re_arr[$i]['new_2lowest'] = $ListingPrice;
+                }
+            }
 		}
 		$i++;
 	}
-	var_dump($re_arr);
+	//var_dump($re_arr);
 	return $re_arr;
         
 }
